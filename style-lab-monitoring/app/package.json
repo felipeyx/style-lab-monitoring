@@ -1,0 +1,12 @@
+{
+  "name": "style-lab-app",
+  "version": "1.0.0",
+  "description": "Aplicação de exemplo com métricas Prometheus",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "prom-client": "^15.1.0"
+  }
+}

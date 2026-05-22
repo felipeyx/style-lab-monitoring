@@ -1,0 +1,94 @@
+groups:
+  - name: infra_alerts
+    interval: 30s
+    rules:
+
+      # ── CPU ─────────────────────────────────────────────────────────
+      - alert: CPU_Alta
+        expr: |
+          100 - (avg by(instance)(
+            rate(node_cpu_seconds_total{mode="idle"}[5m])
+          ) * 100) > 80
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CPU alta em {{ $labels.instance }}"
+          description: "CPU está em {{ $value | printf \"%.1f\" }}% há mais de 2 minutos."
+
+      - alert: CPU_Critica
+        expr: |
+          100 - (avg by(instance)(
+            rate(node_cpu_seconds_total{mode="idle"}[5m])
+          ) * 100) > 95
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "CPU crítica em {{ $labels.instance }}"
+          description: "CPU em {{ $value | printf \"%.1f\" }}%. Investigar imediatamente."
+
+      # ── Memória ──────────────────────────────────────────────────────
+      - alert: Memoria_Baixa
+        expr: |
+          (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 20
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Memória baixa em {{ $labels.instance }}"
+          description: "Apenas {{ $value | printf \"%.1f\" }}% de memória disponível."
+
+      - alert: Memoria_Critica
+        expr: |
+          (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 < 5
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Memória crítica em {{ $labels.instance }}"
+          description: "Apenas {{ $value | printf \"%.1f\" }}% de memória livre!"
+
+      # ── Disco ────────────────────────────────────────────────────────
+      - alert: Disco_Cheio
+        expr: |
+          (1 - (node_filesystem_avail_bytes{fstype!="tmpfs"} /
+                node_filesystem_size_bytes{fstype!="tmpfs"})) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disco quase cheio em {{ $labels.instance }}"
+          description: "Partição {{ $labels.mountpoint }} com {{ $value | printf \"%.1f\" }}% de uso."
+
+      - alert: Disco_Critico
+        expr: |
+          (1 - (node_filesystem_avail_bytes{fstype!="tmpfs"} /
+                node_filesystem_size_bytes{fstype!="tmpfs"})) * 100 > 95
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Disco crítico em {{ $labels.instance }}"
+          description: "Partição {{ $labels.mountpoint }} com {{ $value | printf \"%.1f\" }}%!"
+
+      # ── Serviços ─────────────────────────────────────────────────────
+      - alert: Instancia_Fora
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Serviço fora do ar: {{ $labels.job }}"
+          description: "O target {{ $labels.instance }} está inacessível há 1 minuto."
+
+      # ── Rede ─────────────────────────────────────────────────────────
+      - alert: Rede_Saturada
+        expr: |
+          rate(node_network_receive_bytes_total{device!="lo"}[5m]) > 100000000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Tráfego de rede alto em {{ $labels.instance }}"
+          description: "Interface {{ $labels.device }} recebendo mais de 100MB/s."
