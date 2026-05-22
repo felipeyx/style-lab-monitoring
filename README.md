@@ -2,8 +2,6 @@
 
 Ambiente de **infraestrutura em nuvem** com monitoramento e observabilidade completos, rodando na **Oracle Cloud Always Free** com Docker, Prometheus e Grafana.
 
-![CI](https://github.com/SEU_USUARIO/style-lab-monitoring/actions/workflows/ci.yml/badge.svg)
-
 ---
 
 ## Arquitetura
@@ -22,14 +20,6 @@ VM Oracle Cloud (Ubuntu 22.04 — Ampere ARM, Always Free)
             ├── Alertmanager           :9093  → dispara alertas
             └── Grafana                :3000  → dashboards visuais
 ```
-
----
-
-## Pré-requisitos
-
-- Conta Oracle Cloud ([sempre gratuita](https://www.oracle.com/cloud/free/))
-- VM criada: **Ubuntu 22.04**, shape **VM.Standard.A1.Flex** (4 vCPU / 24 GB RAM)
-- Portas abertas na Security List: `22`, `3000`, `8080`, `8081`, `9090`, `9093`, `9100`
 
 ---
 
@@ -180,7 +170,6 @@ chmod +x scripts/troubleshoot.sh
 
 ## Tecnologias
 
-- **Oracle Cloud Always Free** — Infraestrutura gratuita
 - **Ubuntu 22.04** — Sistema operacional
 - **Docker + Docker Compose** — Containerização
 - **Prometheus** — Coleta e armazenamento de métricas
